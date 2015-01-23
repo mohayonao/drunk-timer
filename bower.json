@@ -1,0 +1,24 @@
+{
+  "name": "drunk-timer",
+  "description": "Stable timer API",
+  "version": "0.1.0",
+  "authors": [
+    "mohayonao <mohayonao@gmail.com>"
+  ],
+  "homepage": "https://github.com/mohayonao/drunk-timer/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "src",
+    "test"
+  ],
+  "keywords": [
+    "timer",
+    "setInterval",
+    "setTimeout",
+    "clearInterval",
+    "clearTimeout"
+  ],
+  "license": "MIT",
+  "main": "build/drunk-timer.js"
+}
