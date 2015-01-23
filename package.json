@@ -6,6 +6,13 @@
   "bugs": {
     "url": "https://github.com/mohayonao/drunk-timer/issues"
   },
+  "devDependencies": {
+    "espower-loader": "^0.10.0",
+    "intelli-espower-loader": "^0.6.0",
+    "mocha": "^2.1.0",
+    "power-assert": "^0.10.1",
+    "tickable-timer": "^0.1.0"
+  },
   "homepage": "https://github.com/mohayonao/drunk-timer/",
   "keywords": [
     "timer",
@@ -15,8 +22,12 @@
     "clearTimeout"
   ],
   "license": "MIT",
+  "main": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/mohayonao/drunk-timer.git"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
