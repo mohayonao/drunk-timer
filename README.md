@@ -1,4 +1,6 @@
 # drunk-timer
+[![Build Status](http://img.shields.io/travis/mohayonao/tickable-timer.svg?style=flat)](https://travis-ci.org/mohayonao/tickable-timer)
+
 > Staggering timer API
 
 
