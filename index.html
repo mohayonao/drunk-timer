@@ -34,49 +34,16 @@
       </div>
     </div>
     <script id="example">
-    var audioContext = new AudioContext();
     var timerId = 0;
 
+    DrunkTimer.config({
+      drunk: function(value, rand) {
+        return value + (rand() * 2 - 1) * 0.25 * value; // value ± rand 25%
+      }
+    });
+
     function start() {
-      var count = 0;
-
-      DrunkTimer.config({
-        drunk: function(value, rand) {
-          return value + (rand() * 2 - 1) * 0.25 * value; // value ± rand 25%
-        }
-      });
-
-      timerId = DrunkTimer.setInterval(function() {
-        var osc = audioContext.createOscillator();
-        var amp = audioContext.createGain();
-
-        var freq, dur;
-        if (count % 4 === 0) {
-          freq = 880;
-          dur = 1.0;
-        } else {
-          freq = 440;
-          dur = 0.5;
-        }
-        count += 1;
-
-        var t0 = audioContext.currentTime;
-        var t1 = t0 + dur;
-
-        osc.frequency.value = freq;
-        amp.gain.setValueAtTime(0.5, t0);
-        amp.gain.exponentialRampToValueAtTime(1e-6, t1);
-
-        osc.start(t0);
-        osc.connect(amp);
-        amp.connect(audioContext.destination);
-
-        DrunkTimer.setTimeout(function() {
-          osc.stop(audioContext.currentTime);
-          osc.disconnect();
-          amp.disconnect();
-        }, 1000);
-      }, 500);
+      timerId = DrunkTimer.setInterval(metronome, 500);
     }
 
     function stop() {
@@ -87,6 +54,41 @@
     var AudioContext = window.AudioContext || window.webkitAudioContext;
     var $ = document.getElementById.bind(document);
 
+    var audioContext = new AudioContext();
+    var count = 0;
+
+    function metronome() {
+      var osc = audioContext.createOscillator();
+      var amp = audioContext.createGain();
+
+      var freq, dur;
+      if (count % 4 === 0) {
+        freq = 880;
+        dur = 1.0;
+      } else {
+        freq = 440;
+        dur = 0.5;
+      }
+      count += 1;
+
+      var t0 = audioContext.currentTime;
+      var t1 = t0 + dur;
+
+      osc.frequency.value = freq;
+      amp.gain.setValueAtTime(0.5, t0);
+      amp.gain.exponentialRampToValueAtTime(1e-6, t1);
+
+      osc.start(t0);
+      osc.connect(amp);
+      amp.connect(audioContext.destination);
+
+      DrunkTimer.setTimeout(function() {
+        osc.stop(audioContext.currentTime);
+        osc.disconnect();
+        amp.disconnect();
+      }, 1000);
+    }
+
     window.onload = function() {
       "use strict";
 
@@ -94,6 +96,7 @@
       $("button").onclick = function(e) {
         isPlaying = !isPlaying;
         if (isPlaying) {
+          count = 0;
           start();
           e.target.textContent = "Stop";
         } else {
