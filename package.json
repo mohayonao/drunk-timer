@@ -28,6 +28,9 @@
     "url": "https://github.com/mohayonao/drunk-timer.git"
   },
   "scripts": {
+    "build": "npm run build-browser && npm run build-minify",
+    "build-browser": "browserify src/index.js --standalone DrunkTimer > build/drunk-timer.js",
+    "build-minify": "uglifyjs build/drunk-timer.js > build/drunk-timer.min.js",
     "test": "mocha"
   }
 }
