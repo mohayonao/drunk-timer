@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>drunk-timer</title>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href=//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css>
+    <style>
+      body { font-family:"Source Sans Pro",sans-serif }
+      #code { padding:0;margin:0;background:white;border:none }
+      #app { margin: 10px 0 }
+      #app .btn { width:100px }
+    </style>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+    <script src="build/drunk-timer.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>drunk-timer</h1>
+        <div>Staggering timer API | <a href="https://github.com/mohayonao/drunk-timer" target="github">GitHub</a></div>
+      </div>
+      <div id="app">
+        <button id="button" class="btn btn-default">Start</button>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">example: drunk metronome</h3>
+        </div>
+        <div class="panel-body">
+          <pre class="prettyprint" id="code"></pre>
+        </div>
+      </div>
+    </div>
+    <script id="example">
+    var audioContext = new AudioContext();
+    var timerId = 0;
+
+    function start() {
+      var count = 0;
+
+      DrunkTimer.config({
+        drunk: function(value, rand) {
+          return value + (rand() * 2 - 1) * 0.25 * value; // value ± rand 25%
+        }
+      });
+
+      timerId = DrunkTimer.setInterval(function() {
+        var osc = audioContext.createOscillator();
+        var amp = audioContext.createGain();
+
+        var freq, dur;
+        if (count % 4 === 0) {
+          freq = 880;
+          dur = 1.0;
+        } else {
+          freq = 440;
+          dur = 0.5;
+        }
+        count += 1;
+
+        var t0 = audioContext.currentTime;
+        var t1 = t0 + dur;
+
+        osc.frequency.value = freq;
+        amp.gain.setValueAtTime(0.5, t0);
+        amp.gain.exponentialRampToValueAtTime(1e-6, t1);
+
+        osc.start(t0);
+        osc.connect(amp);
+        amp.connect(audioContext.destination);
+
+        DrunkTimer.setTimeout(function() {
+          osc.stop(audioContext.currentTime);
+          osc.disconnect();
+          amp.disconnect();
+        }, 1000);
+      }, 500);
+    }
+
+    function stop() {
+      DrunkTimer.clearInterval(timerId);
+    }
+    </script>
+    <script>
+    var AudioContext = window.AudioContext || window.webkitAudioContext;
+    var $ = document.getElementById.bind(document);
+
+    window.onload = function() {
+      "use strict";
+
+      var isPlaying = false;
+      $("button").onclick = function(e) {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          start();
+          e.target.textContent = "Stop";
+        } else {
+          stop();
+          e.target.textContent = "Start";
+        }
+      };
+
+      // code
+      $("code").textContent = $("example").textContent;
+      prettyPrint();
+    };
+    </script>
+  </body>
+</html>
